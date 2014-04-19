@@ -3,14 +3,14 @@ package com.cafaxo.lynx.graphics;
 public class Polygon extends RenderEntity
 {
 
-    public Polygon(int maxVertexDataSize, int maxIndicesCount)
+    public Polygon(ShaderProgram shaderProgram, int maxVertexDataSize, int maxIndicesCount)
     {
-        super(maxVertexDataSize, maxIndicesCount);
+        super(shaderProgram, maxVertexDataSize, maxIndicesCount);
     }
 
-    public static Polygon fromRectangle(int width, int height, float r, float g, float b, float a)
+    public static Polygon fromRectangle(ShaderProgram shaderProgram, int width, int height, float r, float g, float b, float a)
     {
-        Polygon polygon = new Polygon(12, 6);
+        Polygon polygon = new Polygon(shaderProgram, 12, 6);
 
         polygon.addVertex(0, 0, r, g, b, a);
         polygon.addVertex(width, 0, r, g, b, a);

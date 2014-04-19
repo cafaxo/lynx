@@ -3,6 +3,7 @@ package com.cafaxo.lynx.util;
 import java.util.ArrayList;
 
 import com.cafaxo.lynx.graphics.RenderEntity;
+import com.cafaxo.lynx.graphics.ShaderProgram;
 
 public class InterpolatedLine extends RenderEntity
 {
@@ -11,9 +12,9 @@ public class InterpolatedLine extends RenderEntity
 
     private float thickness = 3.0f;
 
-    public InterpolatedLine(int maxVertexDataSize, int maxIndicesCount)
+    public InterpolatedLine(ShaderProgram shaderProgram, int maxVertexDataSize, int maxIndicesCount)
     {
-        super(maxVertexDataSize, maxIndicesCount);
+        super(shaderProgram, maxVertexDataSize, maxIndicesCount);
 
         this.setVisible(false);
     }

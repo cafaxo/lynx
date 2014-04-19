@@ -108,7 +108,7 @@ public class LightingPipeline
         this.camera = new OrthographicCamera(0, width, 0, height);
         this.camera2 = new OrthographicCamera(0, width, 0, height);
 
-        this.sprite = new Sprite();
+        this.sprite = new Sprite(null);
 
         this.lightBuffer = BufferUtils.createFloatBuffer(16 * Light.SIZE);
 

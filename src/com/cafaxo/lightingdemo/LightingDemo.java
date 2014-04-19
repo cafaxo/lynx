@@ -55,10 +55,9 @@ public class LightingDemo
         this.lightingPipeline = new LightingPipeline(720, 480, true);
         ResourceLocation leoLocation = new ResourceLocation("/assets/lightingdemo/texture/terrain.png");
 
-        Polygon polygon = Polygon.fromRectangle(720, 480, 1.f, 1.f, 1.f, 1.f);
+        Polygon polygon = Polygon.fromRectangle(ShaderRegistry.instance.get("polygon"), 720, 480, 1.f, 1.f, 1.f, 1.f);
         polygon.setPosition(0, 0);
         polygon.setDepth(0);
-        polygon.setShaderProgram(ShaderRegistry.instance.get("polygon"));
 
         TextureSheet textureSheet = new TextureSheet();
         TextureSheetNode con = textureSheet.add(leoLocation);
@@ -80,8 +79,7 @@ public class LightingDemo
 
         this.uiElements.add(uiText.getSprites());
 
-        this.sprite = new Sprite(textureSheet, con.textureRegion);
-        this.sprite.setShaderProgram(ShaderRegistry.instance.get("sprite"));
+        this.sprite = new Sprite(ShaderRegistry.instance.get("sprite"), textureSheet, con.textureRegion);
         this.sprite.setDepth(1);
         this.sprite.setPosition(0, 0);
 

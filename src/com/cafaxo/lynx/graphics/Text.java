@@ -27,8 +27,7 @@ public class Text extends Vector2f
 
         for (int i = 0; i < maxLength; ++i)
         {
-            this.sprites[i] = new Sprite(fontCache.getTextureSheet());
-            this.sprites[i].setShaderProgram(ShaderRegistry.instance.get("sprite"));
+            this.sprites[i] = new Sprite(ShaderRegistry.instance.get("sprite"), fontCache.getTextureSheet());
         }
     }
 

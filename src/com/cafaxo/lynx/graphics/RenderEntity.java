@@ -35,10 +35,11 @@ public abstract class RenderEntity extends Vector2f implements Comparable<Render
 
     private boolean hasChanged;
 
-    public RenderEntity(int maxVertexDataSize, int maxIndexDataSize)
+    public RenderEntity(ShaderProgram shaderProgram, int maxVertexDataSize, int maxIndexDataSize)
     {
         super(0.f, 0.f);
 
+        this.shaderProgram = shaderProgram;
         this.vertexData = new float[maxVertexDataSize];
         this.transformedVertexData = new float[maxVertexDataSize];
         this.indexData = new int[maxIndexDataSize];

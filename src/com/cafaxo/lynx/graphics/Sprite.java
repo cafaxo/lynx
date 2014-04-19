@@ -17,9 +17,9 @@ public class Sprite extends RenderEntity
 
     protected TextureRegion textureRegion;
 
-    public Sprite()
+    public Sprite(ShaderProgram shaderProgram)
     {
-        super(20, 6);
+        super(shaderProgram, 20, 6);
 
         this.vertexDataSize = 20;
         this.indexDataSize = 6;
@@ -29,60 +29,60 @@ public class Sprite extends RenderEntity
         this.setColor(1.F, 1.F, 1.F, 1.F);
     }
 
-    public Sprite(Texture[] textures)
+    public Sprite(ShaderProgram shaderProgram, Texture[] textures)
     {
-        this();
+        this(shaderProgram);
 
         this.setTextures(textures);
         this.setTextureRegion(textures[0].getTextureRegion());
         this.setSize(textures[0].width, textures[0].height);
     }
 
-    public Sprite(Texture texture)
+    public Sprite(ShaderProgram shaderProgram, Texture texture)
     {
-        this(new Texture[] { texture });
+        this(shaderProgram, new Texture[] { texture });
     }
 
-    public Sprite(Texture[] textures, int width, int height)
+    public Sprite(ShaderProgram shaderProgram, Texture[] textures, int width, int height)
     {
-        this();
+        this(shaderProgram);
 
         this.setTextures(textures);
         this.setTextureRegion(textures[0].getTextureRegion());
         this.setSize(width, height);
     }
 
-    public Sprite(Texture texture, int width, int height)
+    public Sprite(ShaderProgram shaderProgram, Texture texture, int width, int height)
     {
-        this(new Texture[] { texture }, width, height);
+        this(shaderProgram, new Texture[] { texture }, width, height);
     }
 
-    public Sprite(Texture[] textures, TextureRegion textureRegion)
+    public Sprite(ShaderProgram shaderProgram, Texture[] textures, TextureRegion textureRegion)
     {
-        this();
+        this(shaderProgram);
 
         this.setTextures(textures);
         this.setTextureRegion(textureRegion);
         this.setSize(textureRegion.width, textureRegion.height);
     }
 
-    public Sprite(Texture texture, TextureRegion textureRegion)
+    public Sprite(ShaderProgram shaderProgram, Texture texture, TextureRegion textureRegion)
     {
-        this(new Texture[] { texture }, textureRegion);
+        this(shaderProgram, new Texture[] { texture }, textureRegion);
     }
 
-    public Sprite(Texture[] textures, TextureRegion textureRegion, int width, int height)
+    public Sprite(ShaderProgram shaderProgram, Texture[] textures, TextureRegion textureRegion, int width, int height)
     {
-        this();
+        this(shaderProgram);
 
         this.setTextures(textures);
         this.setTextureRegion(textureRegion);
         this.setSize(width, height);
     }
 
-    public Sprite(Texture texture, TextureRegion textureRegion, int width, int height)
+    public Sprite(ShaderProgram shaderProgram, Texture texture, TextureRegion textureRegion, int width, int height)
     {
-        this(new Texture[] { texture }, textureRegion, width, height);
+        this(shaderProgram, new Texture[] { texture }, textureRegion, width, height);
     }
 
     @Override
