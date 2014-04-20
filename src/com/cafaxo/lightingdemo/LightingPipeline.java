@@ -306,7 +306,7 @@ public class LightingPipeline
 
     private void renderShadowMap(RenderManager renderManager)
     {
-        this.sprite.setTextures(new Texture[] { this.shadowMapInfo, this.occlusionMap });
+        this.sprite.setTexture(this.shadowMapInfo);
         this.sprite.setTextureRegion(this.shadowMapInfo.getTextureRegion());
         this.sprite.setSize(this.width, this.height);
         this.sprite.setShaderProgram(ShaderRegistry.instance.get("shadowMap"));
@@ -329,9 +329,6 @@ public class LightingPipeline
                 GL20.glUniform1(shaderProgram.getUniform("lights[0]"), LightingPipeline.this.lightBuffer);
                 GL20.glUniform1i(shaderProgram.getUniform("numLights"), LightingPipeline.this.lightBuffer.limit() / Light.SIZE);
                 GL20.glUniform2f(shaderProgram.getUniform("occlusionMapDimensions"), LightingPipeline.this.width, LightingPipeline.this.height);
-
-                GL20.glUniform1i(shaderProgram.getUniform("shadowMapInfo"), 0);
-                GL20.glUniform1i(shaderProgram.getUniform("occlusionMap"), 1);
             }
 
         };
