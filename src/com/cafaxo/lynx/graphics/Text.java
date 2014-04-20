@@ -1,34 +1,30 @@
 package com.cafaxo.lynx.graphics;
 
+import com.cafaxo.lynx.util.Color4f;
 import com.cafaxo.lynx.util.ShaderRegistry;
-import com.cafaxo.lynx.util.Vector2f;
 
-public class Text extends Vector2f
+public class Text extends RenderEntity
 {
 
     private FontCache fontCache;
 
     private String text;
 
-    private Sprite sprites[];
-
     private int maxLength, offsetForIllegalChars;
 
     private int width;
 
+    private Color4f color = new Color4f(1.f, 1.f, 1.f, 1.f);
+
     public Text(FontCache fontCache, int maxLength, int offsetForIllegalChars)
     {
-        super(0, 0);
+        super(ShaderRegistry.instance.get("sprite"), maxLength * 20, maxLength * 6);
 
         this.fontCache = fontCache;
         this.maxLength = maxLength;
         this.offsetForIllegalChars = offsetForIllegalChars;
-        this.sprites = new Sprite[maxLength];
 
-        for (int i = 0; i < maxLength; ++i)
-        {
-            this.sprites[i] = new Sprite(ShaderRegistry.instance.get("sprite"), fontCache.getTextureSheet());
-        }
+        this.setTexture(this.fontCache.getTextureSheet());
     }
 
     public void setText(String text)
@@ -40,48 +36,46 @@ public class Text extends Vector2f
 
         this.text = text;
 
-        for (int i = 0; i < this.sprites.length; ++i)
-        {
-            if (i < text.length())
-            {
-                TextureSheetNode node = this.fontCache.getTextureSheetNode(text.charAt(i));
-
-                if (node != null)
-                {
-                    this.sprites[i].setTextureRegion(node.textureRegion);
-                    this.sprites[i].setSize(node.textureRegion.width, node.textureRegion.height);
-                    this.sprites[i].setVisible(true);
-                }
-                else
-                {
-                    this.sprites[i].setVisible(false);
-                }
-            }
-            else
-            {
-                this.sprites[i].setVisible(false);
-            }
-        }
-
         this.rebuildVertices();
     }
 
     public void rebuildVertices()
     {
+        this.resetVertexAndIndexData();
+
         float xOffset = this.x;
+        Sprite tmp = new Sprite(null);
+        int indexDataOffset = 0;
 
         for (int i = 0; i < this.text.length(); ++i)
         {
-            if (!this.sprites[i].isVisible())
+            TextureSheetNode node = this.fontCache.getTextureSheetNode(this.text.charAt(i));
+
+            if (node != null)
             {
-                xOffset += this.offsetForIllegalChars;
+                tmp.setTextureRegion(node.textureRegion);
+                tmp.setSize(node.textureRegion.width, node.textureRegion.height);
+                tmp.setPosition(xOffset, this.y);
+                tmp.setColor(this.color.r, this.color.g, this.color.b, this.color.a);
+
+                xOffset += tmp.getTextureRegion().width;
+
+                this.addVertexData(tmp.getVertexData());
+
+                for (int indexData : tmp.getIndexData())
+                {
+                    this.addIndexData(indexDataOffset + indexData);
+                }
+
+                indexDataOffset += 4;
             }
             else
             {
-                this.sprites[i].setPosition(xOffset, this.y);
-                xOffset += this.sprites[i].getTextureRegion().width;
+                xOffset += this.offsetForIllegalChars;
             }
         }
+
+        this.refreshVertexAndIndexData();
 
         this.width = (int) (xOffset - this.x);
     }
@@ -104,23 +98,12 @@ public class Text extends Vector2f
 
     public void setColor(float r, float g, float b, float a)
     {
-        for (Sprite sprite : this.sprites)
-        {
-            sprite.setColor(r, g, b, a);
-        }
-    }
+        this.color.r = r;
+        this.color.g = g;
+        this.color.b = b;
+        this.color.a = a;
 
-    public void setDepth(int depth)
-    {
-        for (Sprite sprite : this.sprites)
-        {
-            sprite.setDepth(depth);
-        }
-    }
-
-    public Sprite[] getSprites()
-    {
-        return this.sprites;
+        this.rebuildVertices();
     }
 
     public int getWidth()

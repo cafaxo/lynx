@@ -62,10 +62,26 @@ public abstract class RenderEntity extends Vector2f implements Comparable<Render
         this.vertexDataSize++;
     }
 
+    protected void addVertexData(float[] vertexDataArray)
+    {
+        for (float vertexData : vertexDataArray)
+        {
+            this.addVertexData(vertexData);
+        }
+    }
+
     protected void addIndexData(final int index)
     {
         this.indexData[this.indexDataSize] = index;
         this.indexDataSize++;
+    }
+
+    protected void addIndexData(int[] indexDataArray)
+    {
+        for (int indexData : indexDataArray)
+        {
+            this.addIndexData(indexData);
+        }
     }
 
     protected void resetVertexAndIndexData()

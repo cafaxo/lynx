@@ -77,7 +77,7 @@ public class LightingDemo
         uiText.setDepth(2);
         uiText.setColor(0.4f, 0.5f, 0.6f, 1.f);
 
-        this.uiElements.add(uiText.getSprites());
+        this.uiElements.add(uiText);
 
         this.sprite = new Sprite(ShaderRegistry.instance.get("sprite"), textureSheet, con.textureRegion);
         this.sprite.setDepth(1);
@@ -85,10 +85,10 @@ public class LightingDemo
 
         this.lightingPipeline.getDiffuseMapEntities().add(this.sprite);
         this.lightingPipeline.getOcclusionMapEntities().add(this.sprite);
-        this.lightingPipeline.getDiffuseMapEntities().add(text.getSprites());
+        this.lightingPipeline.getDiffuseMapEntities().add(text);
         this.lightingPipeline.getDiffuseMapEntities().add(polygon);
 
-        this.lightingPipeline.getOcclusionMapEntities().add(text.getSprites());
+        this.lightingPipeline.getOcclusionMapEntities().add(text);
 
         this.run();
     }
