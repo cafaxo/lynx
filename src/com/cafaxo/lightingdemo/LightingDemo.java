@@ -12,8 +12,8 @@ import org.lwjgl.opengl.GL20;
 
 import com.cafaxo.lynx.graphics.FontCache;
 import com.cafaxo.lynx.graphics.Polygon;
-import com.cafaxo.lynx.graphics.RenderEntity;
 import com.cafaxo.lynx.graphics.RenderManager;
+import com.cafaxo.lynx.graphics.RenderPass;
 import com.cafaxo.lynx.graphics.ShaderProgram;
 import com.cafaxo.lynx.graphics.Sprite;
 import com.cafaxo.lynx.graphics.Text;
@@ -21,7 +21,6 @@ import com.cafaxo.lynx.graphics.TextureSheet;
 import com.cafaxo.lynx.graphics.TextureSheetNode;
 import com.cafaxo.lynx.util.ResourceLocation;
 import com.cafaxo.lynx.util.ShaderRegistry;
-import com.cafaxo.lynx.util.SortedPool;
 
 public class LightingDemo
 {
@@ -32,7 +31,7 @@ public class LightingDemo
 
     private RenderManager renderManager;
 
-    private SortedPool<RenderEntity> uiElements = new SortedPool<RenderEntity>(new RenderEntity[100]);
+    private RenderPass uiPass;
 
     public LightingDemo()
     {
@@ -52,7 +51,32 @@ public class LightingDemo
 
         this.renderManager = new RenderManager(10000 * 4, 10000 * 6);
 
-        this.lightingPipeline = new LightingPipeline(720, 480, true);
+        this.lightingPipeline = new LightingPipeline(this.renderManager, 720, 480, true);
+
+        this.uiPass = new RenderPass(this.renderManager, RenderPass.Type.STATIC)
+        {
+
+            @Override
+            public void setPreRenderState()
+            {
+                GL11.glEnable(GL11.GL_BLEND);
+                GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            }
+
+            @Override
+            public void setPostRenderState()
+            {
+                GL11.glDisable(GL11.GL_BLEND);
+            }
+
+            @Override
+            public void setUniforms(ShaderProgram shaderProgram)
+            {
+                GL20.glUniformMatrix4(shaderProgram.getUniform("camera"), false, LightingDemo.this.lightingPipeline.camera2.getFloatBuffer());
+            }
+
+        };
+
         ResourceLocation leoLocation = new ResourceLocation("/assets/lightingdemo/texture/terrain.png");
 
         Polygon polygon = Polygon.fromRectangle(ShaderRegistry.instance.get("polygon"), 720, 480, 1.f, 1.f, 1.f, 1.f);
@@ -77,7 +101,7 @@ public class LightingDemo
         uiText.setDepth(2);
         uiText.setColor(0.4f, 0.5f, 0.6f, 1.f);
 
-        this.uiElements.add(uiText);
+        this.uiPass.addEntity(uiText);
 
         this.sprite = new Sprite(ShaderRegistry.instance.get("sprite"), textureSheet, con.textureRegion);
         this.sprite.setDepth(1);
@@ -163,29 +187,7 @@ public class LightingDemo
 
         this.lightingPipeline.render(this.renderManager);
 
-        this.renderManager.new Pass(this.uiElements.getBuffer(), 0, this.uiElements.getSize())
-        {
-
-            @Override
-            public void setPreRenderState()
-            {
-                GL11.glEnable(GL11.GL_BLEND);
-                GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-            }
-
-            @Override
-            public void setPostRenderState()
-            {
-                GL11.glDisable(GL11.GL_BLEND);
-            }
-
-            @Override
-            public void setUniforms(ShaderProgram shaderProgram)
-            {
-                GL20.glUniformMatrix4(shaderProgram.getUniform("camera"), false, LightingDemo.this.lightingPipeline.camera2.getFloatBuffer());
-            }
-
-        };
+        this.renderManager.render(this.uiPass);
 
         this.renderManager.end();
 

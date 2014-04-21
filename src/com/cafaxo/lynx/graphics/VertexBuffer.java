@@ -64,6 +64,8 @@ public class VertexBuffer
 
     public void unmap()
     {
+        this.bind();
+
         GL15.glUnmapBuffer(this.target);
 
         this.mappedBuffer = null;

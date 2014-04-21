@@ -24,6 +24,24 @@ public class Queue<T>
     }
 
     @SuppressWarnings("unchecked")
+    public T get(int index)
+    {
+        if (index < this.offset)
+        {
+            return (T) this.elements[index];
+        }
+        else
+        {
+            throw new IndexOutOfBoundsException();
+        }
+    }
+
+    public int getSize()
+    {
+        return this.offset;
+    }
+
+    @SuppressWarnings("unchecked")
     public T pop()
     {
         ++this.position;

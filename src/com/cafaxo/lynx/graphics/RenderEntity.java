@@ -1,8 +1,9 @@
 package com.cafaxo.lynx.graphics;
 
+import com.cafaxo.lynx.util.IDepthContainer;
 import com.cafaxo.lynx.util.Vector2f;
 
-public abstract class RenderEntity extends Vector2f implements Comparable<RenderEntity>
+public abstract class RenderEntity extends Vector2f implements IDepthContainer
 {
 
     protected ShaderProgram shaderProgram;
@@ -208,6 +209,7 @@ public abstract class RenderEntity extends Vector2f implements Comparable<Render
         this.visible = visible;
     }
 
+    @Override
     public int getDepth()
     {
         return this.depth;
@@ -226,22 +228,6 @@ public abstract class RenderEntity extends Vector2f implements Comparable<Render
     public void setHasChanged(boolean hasChanged)
     {
         this.hasChanged = hasChanged;
-    }
-
-    @Override
-    public int compareTo(RenderEntity other)
-    {
-        if (this.depth < other.depth)
-        {
-            return -1;
-        }
-
-        if (this.depth > other.depth)
-        {
-            return 1;
-        }
-
-        return 0;
     }
 
 }

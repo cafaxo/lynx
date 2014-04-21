@@ -3,6 +3,7 @@ package com.cafaxo.lightingdemo;
 import java.io.File;
 import java.io.IOException;
 import java.nio.FloatBuffer;
+import java.util.Iterator;
 
 import javax.imageio.ImageIO;
 
@@ -14,12 +15,13 @@ import org.lwjgl.opengl.GL30;
 import com.cafaxo.lynx.graphics.OrthographicCamera;
 import com.cafaxo.lynx.graphics.RenderEntity;
 import com.cafaxo.lynx.graphics.RenderManager;
+import com.cafaxo.lynx.graphics.RenderPass;
 import com.cafaxo.lynx.graphics.ShaderProgram;
 import com.cafaxo.lynx.graphics.Sprite;
 import com.cafaxo.lynx.graphics.Texture;
 import com.cafaxo.lynx.util.Color4f;
+import com.cafaxo.lynx.util.DepthSorter;
 import com.cafaxo.lynx.util.ShaderRegistry;
-import com.cafaxo.lynx.util.SortedPool;
 import com.cafaxo.lynx.util.Vector2f;
 
 public class LightingPipeline
@@ -49,17 +51,11 @@ public class LightingPipeline
 
     private Texture shadowMapBlurPass2;
 
-    private Texture finalPass;
-
-    private Sprite sprite;
+    private Texture finalMap;
 
     private FloatBuffer lightBuffer;
 
-    private SortedPool<Light> lights;
-
-    private SortedPool<RenderEntity> diffuseMapEntities;
-
-    private SortedPool<RenderEntity> occlusionMapEntities;
+    private DepthSorter<Light> lights;
 
     private boolean blurView;
 
@@ -67,7 +63,9 @@ public class LightingPipeline
 
     private Color4f ambientLightColor;
 
-    public LightingPipeline(int width, int height, boolean blurView)
+    private RenderPass diffusePass, diffuseBlurPass1, diffuseBlurPass2, occlusionPass, shadowInfoPass, shadowPass, shadowBlurPass1, shadowBlurPass2, finalPass, fxaaPass;
+
+    public LightingPipeline(RenderManager renderManager, int width, int height, boolean blurView)
     {
         this.width = width;
         this.height = height;
@@ -102,53 +100,73 @@ public class LightingPipeline
         this.shadowMapBlurPass2 = new Texture(width, height);
         this.shadowMapBlurPass2.upload();
 
-        this.finalPass = new Texture(width, height);
-        this.finalPass.upload();
+        this.finalMap = new Texture(width, height);
+        this.finalMap.upload();
 
         this.camera = new OrthographicCamera(0, width, 0, height);
         this.camera2 = new OrthographicCamera(0, width, 0, height);
 
-        this.sprite = new Sprite(null);
-
         this.lightBuffer = BufferUtils.createFloatBuffer(16 * Light.SIZE);
 
-        this.lights = new SortedPool<Light>(new Light[16]);
-        this.diffuseMapEntities = new SortedPool<RenderEntity>(new RenderEntity[1000]);
-        this.occlusionMapEntities = new SortedPool<RenderEntity>(new RenderEntity[1000]);
+        this.lights = new DepthSorter<Light>();
 
         this.viewSource = new Vector2f(0.f, 0.f);
         this.ambientLightColor = new Color4f(0.f, 0.f, 0.f, 1.0f);
+
+        this.initDiffusePass(renderManager);
+
+        if (this.blurView)
+        {
+            this.initDiffuseBlurPass(renderManager);
+        }
+
+        this.initOcclusionPass(renderManager);
+
+        this.initShadowInfoPass(renderManager);
+
+        this.initShadowPass(renderManager);
+
+        this.initShadowBlurPass(renderManager);
+
+        this.initFinalPass(renderManager);
     }
 
     public void render(RenderManager renderManager)
     {
         this.lightBuffer.clear();
 
-        for (int i = 0; i < this.lights.getSize(); ++i)
+        Iterator<Light> iter = this.lights.iterator();
+
+        while (iter.hasNext())
         {
-            this.lights.get(i).writeToFloatBuffer(this.lightBuffer);
+            iter.next().writeToFloatBuffer(this.lightBuffer);
         }
 
         this.lightBuffer.flip();
 
         GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, this.frameBufferId);
 
-        this.renderDiffuseMap(renderManager);
+        renderManager.render(this.diffusePass);
 
         if (this.blurView)
         {
-            this.renderDiffuseMapBlur(renderManager);
+            renderManager.render(this.diffuseBlurPass1);
+            renderManager.render(this.diffuseBlurPass2);
         }
 
-        this.renderOcclusionMap(renderManager);
+        renderManager.render(this.occlusionPass);
 
-        this.renderShadowMapInfo(renderManager);
+        renderManager.render(this.shadowInfoPass);
 
-        this.renderShadowMap(renderManager);
+        renderManager.render(this.shadowPass);
 
-        this.renderShadowMapBlur(renderManager);
+        renderManager.render(this.shadowBlurPass1);
 
-        this.renderFinal(renderManager);
+        renderManager.render(this.shadowBlurPass2);
+
+        renderManager.render(this.finalPass);
+
+        renderManager.render(this.fxaaPass);
     }
 
     public void dumpToDisk()
@@ -173,9 +191,9 @@ public class LightingPipeline
         }
     }
 
-    private void renderDiffuseMap(RenderManager renderManager)
+    private void initDiffusePass(RenderManager renderManager)
     {
-        renderManager.new Pass(this.diffuseMapEntities.getBuffer(), 0, this.diffuseMapEntities.getSize())
+        this.diffusePass = new RenderPass(renderManager, RenderPass.Type.DYNAMIC)
         {
 
             @Override
@@ -203,14 +221,9 @@ public class LightingPipeline
         };
     }
 
-    private void renderDiffuseMapBlur(RenderManager renderManager)
+    private void initDiffuseBlurPass(RenderManager renderManager)
     {
-        this.sprite.setTexture(this.diffuseMap);
-        this.sprite.setTextureRegion(this.diffuseMap.getTextureRegion());
-        this.sprite.setSize(this.width, this.height);
-        this.sprite.setShaderProgram(ShaderRegistry.instance.get("blur"));
-
-        renderManager.new Pass(this.sprite)
+        this.diffuseBlurPass1 = new RenderPass(renderManager, RenderPass.Type.STATIC)
         {
 
             @Override
@@ -230,10 +243,9 @@ public class LightingPipeline
 
         };
 
-        this.sprite.setTexture(this.diffuseMapBlurPass1);
-        this.sprite.setTextureRegion(this.diffuseMapBlurPass1.getTextureRegion());
+        this.diffuseBlurPass1.addEntity(new Sprite(ShaderRegistry.instance.get("blur"), this.diffuseMap));
 
-        renderManager.new Pass(this.sprite)
+        this.diffuseBlurPass2 = new RenderPass(renderManager, RenderPass.Type.STATIC)
         {
 
             @Override
@@ -252,11 +264,13 @@ public class LightingPipeline
             }
 
         };
+
+        this.diffuseBlurPass2.addEntity(new Sprite(ShaderRegistry.instance.get("blur"), this.diffuseMapBlurPass1));
     }
 
-    private void renderOcclusionMap(RenderManager renderManager)
+    private void initOcclusionPass(RenderManager renderManager)
     {
-        renderManager.new Pass(this.occlusionMapEntities.getBuffer(), 0, this.occlusionMapEntities.getSize())
+        this.occlusionPass = new RenderPass(renderManager, RenderPass.Type.DYNAMIC)
         {
 
             @Override
@@ -275,14 +289,9 @@ public class LightingPipeline
         };
     }
 
-    private void renderShadowMapInfo(RenderManager renderManager)
+    private void initShadowInfoPass(RenderManager renderManager)
     {
-        this.sprite.setTexture(this.occlusionMap);
-        this.sprite.setTextureRegion(this.occlusionMap.getTextureRegion());
-        this.sprite.setSize(this.shadowMapInfo.getWidth(), this.shadowMapInfo.getHeight());
-        this.sprite.setShaderProgram(ShaderRegistry.instance.get("shadowMapInfo"));
-
-        renderManager.new Pass(this.sprite)
+        this.shadowInfoPass = new RenderPass(renderManager, RenderPass.Type.STATIC)
         {
 
             @Override
@@ -302,16 +311,13 @@ public class LightingPipeline
                 GL20.glUniform2f(shaderProgram.getUniform("occlusionMapDimensions"), LightingPipeline.this.width, LightingPipeline.this.height);
             }
         };
+
+        this.shadowInfoPass.addEntity(new Sprite(ShaderRegistry.instance.get("shadowMapInfo"), this.occlusionMap, this.shadowMapInfo.getWidth(), this.shadowMapInfo.getHeight()));
     }
 
-    private void renderShadowMap(RenderManager renderManager)
+    private void initShadowPass(RenderManager renderManager)
     {
-        this.sprite.setTexture(this.shadowMapInfo);
-        this.sprite.setTextureRegion(this.shadowMapInfo.getTextureRegion());
-        this.sprite.setSize(this.width, this.height);
-        this.sprite.setShaderProgram(ShaderRegistry.instance.get("shadowMap"));
-
-        renderManager.new Pass(this.sprite)
+        this.shadowPass = new RenderPass(renderManager, RenderPass.Type.STATIC)
         {
 
             @Override
@@ -332,16 +338,13 @@ public class LightingPipeline
             }
 
         };
+
+        this.shadowPass.addEntity(new Sprite(ShaderRegistry.instance.get("shadowMap"), this.shadowMapInfo, this.width, this.height));
     }
 
-    private void renderShadowMapBlur(RenderManager renderManager)
+    private void initShadowBlurPass(RenderManager renderManager)
     {
-        this.sprite.setTexture(this.shadowMap);
-        this.sprite.setTextureRegion(this.shadowMap.getTextureRegion());
-        this.sprite.setSize(this.width, this.height);
-        this.sprite.setShaderProgram(ShaderRegistry.instance.get("blur"));
-
-        renderManager.new Pass(this.sprite)
+        this.shadowBlurPass1 = new RenderPass(renderManager, RenderPass.Type.STATIC)
         {
 
             @Override
@@ -360,10 +363,9 @@ public class LightingPipeline
 
         };
 
-        this.sprite.setTexture(this.shadowMapBlurPass1);
-        this.sprite.setTextureRegion(this.shadowMapBlurPass1.getTextureRegion());
+        this.shadowBlurPass1.addEntity(new Sprite(ShaderRegistry.instance.get("blur"), this.shadowMap));
 
-        renderManager.new Pass(this.sprite)
+        this.shadowBlurPass2 = new RenderPass(renderManager, RenderPass.Type.STATIC)
         {
 
             @Override
@@ -381,30 +383,19 @@ public class LightingPipeline
             }
 
         };
+
+        this.shadowBlurPass2.addEntity(new Sprite(ShaderRegistry.instance.get("blur"), this.shadowMapBlurPass1));
     }
 
-    private void renderFinal(RenderManager renderManager)
+    private void initFinalPass(RenderManager renderManager)
     {
-        if (LightingPipeline.this.blurView)
-        {
-            this.sprite.setTextures(new Texture[] { this.diffuseMap, this.diffuseMapBlurPass2, this.shadowMapBlurPass2 });
-        }
-        else
-        {
-            this.sprite.setTextures(new Texture[] { this.diffuseMap, this.shadowMapBlurPass2 });
-        }
-
-        this.sprite.setTextureRegion(this.diffuseMap.getTextureRegion());
-        this.sprite.setSize(this.width, this.height);
-        this.sprite.setShaderProgram(ShaderRegistry.instance.get("final"));
-
-        renderManager.new Pass(this.sprite)
+        this.finalPass = new RenderPass(renderManager, RenderPass.Type.STATIC)
         {
 
             @Override
             public void setPreRenderState()
             {
-                GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0, GL11.GL_TEXTURE_2D, LightingPipeline.this.finalPass.getId(), 0);
+                GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0, GL11.GL_TEXTURE_2D, LightingPipeline.this.finalMap.getId(), 0);
                 GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
             }
 
@@ -438,12 +429,23 @@ public class LightingPipeline
 
         };
 
-        this.sprite.setTexture(this.finalPass);
-        this.sprite.setTextureRegion(this.finalPass.getTextureRegion());
-        this.sprite.setSize(this.width, this.height);
-        this.sprite.setShaderProgram(ShaderRegistry.instance.get("fxaa"));
+        Sprite finalPassSprite = new Sprite(ShaderRegistry.instance.get("final"));
 
-        renderManager.new Pass(this.sprite)
+        if (LightingPipeline.this.blurView)
+        {
+            finalPassSprite.setTextures(new Texture[] { this.diffuseMap, this.diffuseMapBlurPass2, this.shadowMapBlurPass2 });
+        }
+        else
+        {
+            finalPassSprite.setTextures(new Texture[] { this.diffuseMap, this.shadowMapBlurPass2 });
+        }
+
+        finalPassSprite.setTextureRegion(this.diffuseMap.getTextureRegion());
+        finalPassSprite.setSize(this.width, this.height);
+
+        this.finalPass.addEntity(finalPassSprite);
+
+        this.fxaaPass = new RenderPass(renderManager, RenderPass.Type.STATIC)
         {
 
             @Override
@@ -461,21 +463,23 @@ public class LightingPipeline
             }
 
         };
+
+        this.fxaaPass.addEntity(new Sprite(ShaderRegistry.instance.get("fxaa"), this.finalMap));
     }
 
-    public SortedPool<Light> getLights()
+    public DepthSorter<Light> getLights()
     {
         return this.lights;
     }
 
-    public SortedPool<RenderEntity> getDiffuseMapEntities()
+    public DepthSorter<RenderEntity> getDiffuseMapEntities()
     {
-        return this.diffuseMapEntities;
+        return this.diffusePass.getEntities();
     }
 
-    public SortedPool<RenderEntity> getOcclusionMapEntities()
+    public DepthSorter<RenderEntity> getOcclusionMapEntities()
     {
-        return this.occlusionMapEntities;
+        return this.occlusionPass.getEntities();
     }
 
     public Vector2f getViewSource()

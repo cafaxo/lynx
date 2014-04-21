@@ -2,9 +2,10 @@ package com.cafaxo.lightingdemo;
 
 import java.nio.FloatBuffer;
 
+import com.cafaxo.lynx.util.IDepthContainer;
 import com.cafaxo.lynx.util.Vector2f;
 
-public class Light extends Vector2f implements Comparable<Light>
+public class Light extends Vector2f implements IDepthContainer
 {
 
     public static final int SIZE = 11;
@@ -80,6 +81,7 @@ public class Light extends Vector2f implements Comparable<Light>
         floatBuffer.put(this.quadratic);
     }
 
+    @Override
     public int getDepth()
     {
         return this.depth;
@@ -98,22 +100,6 @@ public class Light extends Vector2f implements Comparable<Light>
     public void setVisible(boolean visible)
     {
         this.visible = visible;
-    }
-
-    @Override
-    public int compareTo(Light other)
-    {
-        if (this.depth < other.depth)
-        {
-            return -1;
-        }
-
-        if (this.depth > other.depth)
-        {
-            return 1;
-        }
-
-        return 0;
     }
 
 }
