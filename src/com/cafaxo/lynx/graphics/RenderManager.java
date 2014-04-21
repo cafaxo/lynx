@@ -1,9 +1,5 @@
 package com.cafaxo.lynx.graphics;
 
-import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
-
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL15;
@@ -20,9 +16,9 @@ public class RenderManager
 
         public Texture[] textures;
 
-        public int iboBufferOffset, indexCount;
+        public int indexCount;
 
-        public int vboBufferOffset;
+        public long vboBufferOffset, iboBufferOffset;
 
     }
 
@@ -42,11 +38,6 @@ public class RenderManager
                 throw new RuntimeException("render batch is not in use");
             }
 
-            if ((RenderManager.this.currentVboPosition >= RenderManager.this.vboSize) || (RenderManager.this.currentIboPosition >= RenderManager.this.iboSize))
-            {
-                throw new RuntimeException("render batch size exceeded limit");
-            }
-
             RenderEntity entity = null;
 
             for (int i = offset; i < (offset + count);)
@@ -57,8 +48,8 @@ public class RenderManager
 
                 batch.shaderProgram = entity.getShaderProgram();
                 batch.textures = entity.getTextures();
-                batch.vboBufferOffset = RenderManager.this.currentVboPosition;
-                batch.iboBufferOffset = RenderManager.this.currentIboPosition;
+                batch.vboBufferOffset = RenderManager.this.dynamicVertexBuffer.currentPosition;
+                batch.iboBufferOffset = RenderManager.this.dynamicIndexBuffer.currentPosition;
 
                 for (; i < (offset + count); ++i)
                 {
@@ -74,19 +65,19 @@ public class RenderManager
                         break;
                     }
 
-                    RenderManager.this.mappedVertexBufferAsFloats.put(entity.getVertexData(), 0, entity.getVertexDataSize());
+                    RenderManager.this.dynamicVertexBuffer.mappedBufferAsFloats.put(entity.getVertexData(), 0, entity.getVertexDataSize());
 
                     for (int j = 0; j < entity.getIndexDataSize(); ++j)
                     {
-                        int vboNumber = ((RenderManager.this.currentVboPosition - batch.vboBufferOffset) * 4) / batch.shaderProgram.getBytesPerVertex();
-                        RenderManager.this.mappedIndexBufferAsInts.put(vboNumber + entity.getIndexData()[j]);
+                        long vboNumber = ((RenderManager.this.dynamicVertexBuffer.currentPosition - batch.vboBufferOffset) * 4) / batch.shaderProgram.getBytesPerVertex();
+                        RenderManager.this.dynamicIndexBuffer.mappedBufferAsInts.put((int) vboNumber + entity.getIndexData()[j]);
                     }
 
-                    RenderManager.this.currentVboPosition += entity.getVertexDataSize();
-                    RenderManager.this.currentIboPosition += entity.getIndexDataSize();
+                    RenderManager.this.dynamicVertexBuffer.currentPosition += entity.getVertexDataSize();
+                    RenderManager.this.dynamicIndexBuffer.currentPosition += entity.getIndexDataSize();
                 }
 
-                batch.indexCount = RenderManager.this.currentIboPosition - batch.iboBufferOffset;
+                batch.indexCount = (int) (RenderManager.this.dynamicIndexBuffer.currentPosition - batch.iboBufferOffset);
                 this.batchQueue.add(batch);
             }
 
@@ -137,35 +128,18 @@ public class RenderManager
 
     }
 
-    private int vertexBufferId;
+    private VertexBuffer dynamicVertexBuffer;
 
-    private int indexBufferId;
+    private VertexBuffer dynamicIndexBuffer;
 
     private boolean isInUse;
 
-    private ByteBuffer mappedVertexBuffer;
-
-    private FloatBuffer mappedVertexBufferAsFloats;
-
-    private ByteBuffer mappedIndexBuffer;
-
-    private IntBuffer mappedIndexBufferAsInts;
-
-    private long vboSize;
-
-    private long iboSize;
-
-    private int currentVboPosition, currentIboPosition;
-
     private Queue<Pass> passQueue;
 
-    public RenderManager(int vboSize, int iboSize)
+    public RenderManager(long vboSize, long iboSize)
     {
-        this.vboSize = vboSize;
-        this.iboSize = iboSize;
-
-        this.vertexBufferId = GL15.glGenBuffers();
-        this.indexBufferId = GL15.glGenBuffers();
+        this.dynamicVertexBuffer = new VertexBuffer(GL15.GL_ARRAY_BUFFER, GL15.GL_STREAM_DRAW, vboSize);
+        this.dynamicIndexBuffer = new VertexBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, GL15.GL_STREAM_DRAW, iboSize);
 
         this.passQueue = new Queue<Pass>(20);
     }
@@ -179,24 +153,22 @@ public class RenderManager
 
         this.isInUse = true;
 
-        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, this.vertexBufferId);
-        GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, this.indexBufferId);
+        this.dynamicVertexBuffer.orphan();
+        this.dynamicIndexBuffer.orphan();
 
-        this.orphanAndRemapBuffers();
+        this.dynamicVertexBuffer.map();
+        this.dynamicIndexBuffer.map();
     }
 
     public void end()
     {
         this.isInUse = false;
 
-        this.mappedVertexBufferAsFloats.flip();
-        this.mappedIndexBufferAsInts.flip();
+        this.dynamicVertexBuffer.unmap();
+        this.dynamicIndexBuffer.unmap();
 
-        GL15.glUnmapBuffer(GL15.GL_ARRAY_BUFFER);
-        GL15.glUnmapBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER);
-
-        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, this.vertexBufferId);
-        GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, this.indexBufferId);
+        this.dynamicVertexBuffer.bind();
+        this.dynamicIndexBuffer.bind();
 
         while (this.passQueue.hasNext())
         {
@@ -206,22 +178,8 @@ public class RenderManager
 
         this.passQueue.clear();
 
-        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-        GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
-    }
-
-    public void orphanAndRemapBuffers()
-    {
-        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, this.vboSize, GL15.GL_STREAM_DRAW);
-        GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, this.iboSize, GL15.GL_STREAM_DRAW);
-
-        this.mappedVertexBuffer = GL15.glMapBuffer(GL15.GL_ARRAY_BUFFER, GL15.GL_WRITE_ONLY, this.vboSize, null);
-        this.mappedVertexBufferAsFloats = this.mappedVertexBuffer.asFloatBuffer();
-        this.currentVboPosition = 0;
-
-        this.mappedIndexBuffer = GL15.glMapBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, GL15.GL_WRITE_ONLY, this.iboSize, null);
-        this.mappedIndexBufferAsInts = this.mappedIndexBuffer.asIntBuffer();
-        this.currentIboPosition = 0;
+        this.dynamicVertexBuffer.unbind();
+        this.dynamicIndexBuffer.unbind();
     }
 
 }

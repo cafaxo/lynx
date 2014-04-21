@@ -152,7 +152,7 @@ public abstract class ShaderProgram
 
     public abstract void defineAttributes();
 
-    public void bindAttributes(int offset)
+    public void bindAttributes(long offset)
     {
         for (Map.Entry<String, ShaderAttribute> entry : this.attributes.entrySet())
         {
