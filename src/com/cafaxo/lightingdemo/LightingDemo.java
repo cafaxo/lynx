@@ -36,6 +36,8 @@ public class LightingDemo
 
     private RenderPassEntity uiPass;
 
+    private Polygon polygon;
+
     public LightingDemo()
     {
         try
@@ -128,14 +130,14 @@ public class LightingDemo
 
         };
 
-        ResourceLocation leoLocation = new ResourceLocation("/assets/lightingdemo/texture/terrain.png");
+        ResourceLocation terrainLocation = new ResourceLocation("/assets/lightingdemo/texture/terrain.png");
 
-        Polygon polygon = Polygon.fromRectangle(ShaderRegistry.instance.get("polygon"), 720, 480, 1.f, 1.f, 1.f, 1.f);
-        polygon.setPosition(0, 0);
-        polygon.setDepth(0);
+        this.polygon = Polygon.fromRectangle(ShaderRegistry.instance.get("polygon"), 720, 480, 1.f, 1.f, 1.f, 1.f);
+        this.polygon.setPosition(0, 0);
+        this.polygon.setDepth(0);
 
         TextureSheet textureSheet = new TextureSheet();
-        TextureSheetNode con = textureSheet.add(leoLocation);
+        TextureSheetNode terrainNode = textureSheet.add(terrainLocation);
 
         FontCache fontcache = new FontCache(textureSheet, new Font("Times New Roman", Font.BOLD, 24));
         textureSheet.create();
@@ -154,13 +156,14 @@ public class LightingDemo
 
         this.uiPass.addEntity(uiText);
 
-        this.sprite = new Sprite(ShaderRegistry.instance.get("sprite"), textureSheet, con.textureRegion);
+        this.sprite = new Sprite(ShaderRegistry.instance.get("sprite"), textureSheet, terrainNode.textureRegion);
         this.sprite.setDepth(1);
         this.sprite.setPosition(0, 0);
 
         this.diffusePass.addEntity(this.sprite);
+
         this.diffusePass.addEntity(text);
-        this.diffusePass.addEntity(polygon);
+        this.diffusePass.addEntity(this.polygon);
 
         this.occlusionPass.addEntity(this.sprite);
         this.occlusionPass.addEntity(text);
@@ -189,7 +192,7 @@ public class LightingDemo
             this.tick();
             this.render();
 
-            //Display.sync(60);
+            Display.sync(60);
 
             long now = this.getTime();
 
@@ -204,11 +207,11 @@ public class LightingDemo
         Display.destroy();
     }
 
-    public void addLight(int x, int y)
+    public void addLight(float x, float y)
     {
         Light light = new Light();
 
-        light.setPosition(x, y);
+        light.getPosition().setPosition(x, y);
         light.setColor(1f - ((float) Math.random() * 0.4f), 1f - ((float) Math.random() * 0.4f), 1f - ((float) Math.random() * 0.4f));
         light.setSize(400.f);
         light.setIntensity(1.5f);
@@ -230,9 +233,13 @@ public class LightingDemo
                 int x = Mouse.getEventX();
                 int y = Mouse.getEventY();
 
-                this.addLight(x, y);
+                this.addLight(x - this.lightingPipeline.getCamera().getX(), y - this.lightingPipeline.getCamera().getY());
             }
         }
+
+        this.lightingPipeline.getCamera().translate(1f, 0);
+
+        this.polygon.setPosition(-this.lightingPipeline.getCamera().getX(), -this.lightingPipeline.getCamera().getY());
 
         this.lightingPipeline.getAmbientLightColor().set(0.15f, 0.15f, 0.25f, 1.f);
 

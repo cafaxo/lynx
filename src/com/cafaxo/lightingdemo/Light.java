@@ -2,13 +2,16 @@ package com.cafaxo.lightingdemo;
 
 import java.nio.FloatBuffer;
 
+import com.cafaxo.lynx.graphics.OrthographicCamera;
 import com.cafaxo.lynx.util.IDepthContainer;
 import com.cafaxo.lynx.util.Vector2f;
 
-public class Light extends Vector2f implements IDepthContainer
+public class Light implements IDepthContainer
 {
 
     public static final int SIZE = 11;
+
+    private Vector2f position, transformedPosition;
 
     protected float radius;
 
@@ -24,11 +27,17 @@ public class Light extends Vector2f implements IDepthContainer
 
     public Light()
     {
-        super(0.f, 0.f);
+        this.position = new Vector2f(0.f, 0.f);
+        this.transformedPosition = new Vector2f(0.f, 0.f);
 
         this.coneSize = 1.f;
         this.constant = 1.f;
         this.visible = true;
+    }
+
+    public Vector2f getPosition()
+    {
+        return this.position;
     }
 
     public void setSize(float radius)
@@ -66,10 +75,15 @@ public class Light extends Vector2f implements IDepthContainer
         this.b = b;
     }
 
+    public void refreshTransformedPosition(OrthographicCamera camera)
+    {
+        this.transformedPosition.setPosition(this.position.getX() + camera.getX(), this.position.getY() + camera.getY());
+    }
+
     public void writeToFloatBuffer(FloatBuffer floatBuffer)
     {
-        floatBuffer.put(this.x);
-        floatBuffer.put(this.y);
+        floatBuffer.put(this.transformedPosition.getX());
+        floatBuffer.put(this.transformedPosition.getY());
         floatBuffer.put(this.radius);
         floatBuffer.put(this.coneStart);
         floatBuffer.put(this.coneSize);

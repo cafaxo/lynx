@@ -146,7 +146,10 @@ public class LightingPipeline
 
         while (iter.hasNext())
         {
-            iter.next().writeToFloatBuffer(this.lightBuffer);
+            Light light = iter.next();
+
+            light.refreshTransformedPosition(this.camera);
+            light.writeToFloatBuffer(this.lightBuffer);
         }
 
         this.lightBuffer.flip();
