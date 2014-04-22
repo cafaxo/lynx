@@ -15,26 +15,26 @@ public class OrthographicCamera extends Camera
         this.isDirty = true;
     }
 
-    public void setPosition(int x, int y)
+    public void setPosition(float x, float y)
     {
         this.transformation.translateTo(x, y, 0);
         this.isDirty = true;
     }
 
-    public void translate(int x, int y)
+    public void translate(float x, float y)
     {
         this.transformation.translate(x, y, 0);
         this.isDirty = true;
     }
 
-    public int getX()
+    public float getX()
     {
-        return (int) this.transformation.getComponents().get(3);
+        return this.transformation.getComponents().get(3);
     }
 
-    public int getY()
+    public float getY()
     {
-        return (int) this.transformation.getComponents().get(7);
+        return this.transformation.getComponents().get(7);
     }
 
 }

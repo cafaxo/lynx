@@ -19,7 +19,7 @@ public class Camera
     {
         if (this.isDirty)
         {
-            Matrix4f.multiply(this.projection, this.transformation, this.combined);
+            Matrix4f.multiply(this.transformation, this.projection, this.combined);
             this.isDirty = false;
         }
 
