@@ -14,6 +14,7 @@ import com.cafaxo.lynx.graphics.FontCache;
 import com.cafaxo.lynx.graphics.Polygon;
 import com.cafaxo.lynx.graphics.RenderManager;
 import com.cafaxo.lynx.graphics.RenderPass;
+import com.cafaxo.lynx.graphics.RenderPassEntity;
 import com.cafaxo.lynx.graphics.ShaderProgram;
 import com.cafaxo.lynx.graphics.Sprite;
 import com.cafaxo.lynx.graphics.Text;
@@ -31,7 +32,9 @@ public class LightingDemo
 
     private RenderManager renderManager;
 
-    private RenderPass uiPass;
+    private RenderPassEntity diffusePass, occlusionPass;
+
+    private RenderPassEntity uiPass;
 
     public LightingDemo()
     {
@@ -53,11 +56,11 @@ public class LightingDemo
 
         this.lightingPipeline = new LightingPipeline(this.renderManager, 720, 480, true);
 
-        this.uiPass = new RenderPass(this.renderManager, RenderPass.Type.STATIC)
+        this.diffusePass = new RenderPassEntity(this.renderManager, RenderPass.Type.DYNAMIC)
         {
 
             @Override
-            public void setPreRenderState()
+            public void setRenderState()
             {
                 GL11.glEnable(GL11.GL_BLEND);
                 GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -72,7 +75,55 @@ public class LightingDemo
             @Override
             public void setUniforms(ShaderProgram shaderProgram)
             {
-                GL20.glUniformMatrix4(shaderProgram.getUniform("camera"), false, LightingDemo.this.lightingPipeline.camera2.getFloatBuffer());
+                GL20.glUniformMatrix4(shaderProgram.getUniform("camera"), false, LightingDemo.this.lightingPipeline.getCamera().getFloatBuffer());
+            }
+
+        };
+
+        this.occlusionPass = new RenderPassEntity(this.renderManager, RenderPass.Type.DYNAMIC)
+        {
+
+            @Override
+            public void setRenderState()
+            {
+                GL11.glEnable(GL11.GL_BLEND);
+                GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            }
+
+            @Override
+            public void setPostRenderState()
+            {
+                GL11.glDisable(GL11.GL_BLEND);
+            }
+
+            @Override
+            public void setUniforms(ShaderProgram shaderProgram)
+            {
+                GL20.glUniformMatrix4(shaderProgram.getUniform("camera"), false, LightingDemo.this.lightingPipeline.getCamera().getFloatBuffer());
+            }
+
+        };
+
+        this.uiPass = new RenderPassEntity(this.renderManager, RenderPass.Type.DYNAMIC)
+        {
+
+            @Override
+            public void setRenderState()
+            {
+                GL11.glEnable(GL11.GL_BLEND);
+                GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            }
+
+            @Override
+            public void setPostRenderState()
+            {
+                GL11.glDisable(GL11.GL_BLEND);
+            }
+
+            @Override
+            public void setUniforms(ShaderProgram shaderProgram)
+            {
+                GL20.glUniformMatrix4(shaderProgram.getUniform("camera"), false, LightingDemo.this.lightingPipeline.getCamera().getFloatBuffer());
             }
 
         };
@@ -107,12 +158,16 @@ public class LightingDemo
         this.sprite.setDepth(1);
         this.sprite.setPosition(0, 0);
 
-        this.lightingPipeline.getDiffuseMapEntities().add(this.sprite);
-        this.lightingPipeline.getOcclusionMapEntities().add(this.sprite);
-        this.lightingPipeline.getDiffuseMapEntities().add(text);
-        this.lightingPipeline.getDiffuseMapEntities().add(polygon);
+        this.diffusePass.addEntity(this.sprite);
+        this.diffusePass.addEntity(text);
+        this.diffusePass.addEntity(polygon);
 
-        this.lightingPipeline.getOcclusionMapEntities().add(text);
+        this.occlusionPass.addEntity(this.sprite);
+        this.occlusionPass.addEntity(text);
+
+        this.lightingPipeline.getDiffusePasses().add(this.diffusePass);
+
+        this.lightingPipeline.getOcclusionPasses().add(this.occlusionPass);
 
         this.run();
     }

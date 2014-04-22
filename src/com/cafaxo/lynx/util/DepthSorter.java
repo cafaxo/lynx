@@ -61,19 +61,19 @@ public class DepthSorter<T extends IDepthContainer>
 
     private ArrayList<ArrayList<T>> layers = new ArrayList<ArrayList<T>>();
 
-    public void addBulkIntoLayer(int layer, ArrayList<T> depthContainers)
+    public void addBulkIntoLayer(int depth, ArrayList<T> depthContainers)
     {
-        if (layer < 0)
+        if (depth < 0)
         {
             throw new RuntimeException("layers must have a positive index");
         }
 
-        for (int i = this.layers.size(); (i - 1) <= layer; ++i)
+        for (int i = this.layers.size(); (i - 1) <= depth; ++i)
         {
             this.layers.add(new ArrayList<T>());
         }
 
-        this.layers.get(layer).addAll(depthContainers);
+        this.layers.get(depth).addAll(depthContainers);
         this.size += depthContainers.size();
     }
 

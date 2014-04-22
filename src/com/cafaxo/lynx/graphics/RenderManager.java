@@ -103,7 +103,7 @@ public class RenderManager
 
             if (pass.getType() == RenderPass.Type.DYNAMIC)
             {
-                pass.refreshBatchQueue();
+                pass.refresh();
             }
         }
 
@@ -126,7 +126,7 @@ public class RenderManager
 
                 if (pass.getType() == RenderPass.Type.STATIC)
                 {
-                    pass.refreshBatchQueue();
+                    pass.refresh();
                 }
             }
 
