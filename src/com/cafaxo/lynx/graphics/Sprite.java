@@ -88,12 +88,12 @@ public class Sprite extends RenderEntity
     @Override
     protected void refreshVertexAndIndexData()
     {
-        float localX = -this.originX;
-        float localY = -this.originY;
+        float localX = -this.getOriginX();
+        float localY = -this.getOriginY();
         float localX2 = localX + this.width;
         float localY2 = localY + this.height;
-        float worldOriginX = this.x - localX;
-        float worldOriginY = this.y - localY;
+        float worldOriginX = this.getX() - localX;
+        float worldOriginY = this.getY() - localY;
 
         if (this.rotation != 0.F)
         {

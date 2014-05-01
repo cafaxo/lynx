@@ -43,7 +43,7 @@ public class Text extends RenderEntity
     {
         this.resetVertexAndIndexData();
 
-        float xOffset = this.x;
+        float xOffset = this.getX();
         Sprite tmp = new Sprite(null);
         int indexDataOffset = 0;
 
@@ -55,7 +55,7 @@ public class Text extends RenderEntity
             {
                 tmp.setTextureRegion(node.textureRegion);
                 tmp.setSize(node.textureRegion.width, node.textureRegion.height);
-                tmp.setPosition(xOffset, this.y);
+                tmp.setPosition(xOffset, this.getY());
                 tmp.setColor(this.color.r, this.color.g, this.color.b, this.color.a);
 
                 xOffset += tmp.getTextureRegion().width;
@@ -77,7 +77,7 @@ public class Text extends RenderEntity
 
         this.refreshVertexAndIndexData();
 
-        this.width = (int) (xOffset - this.x);
+        this.width = (int) (xOffset - this.getX());
     }
 
     @Override

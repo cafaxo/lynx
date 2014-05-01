@@ -46,8 +46,8 @@ public class Polygon extends RenderEntity
     {
         for (int i = 0; i < (this.vertexData.length / 3); ++i)
         {
-            this.transformedVertexData[i * 3] = this.vertexData[i * 3] + this.x;
-            this.transformedVertexData[(i * 3) + 1] = this.vertexData[(i * 3) + 1] + this.y;
+            this.transformedVertexData[i * 3] = this.vertexData[i * 3] + this.getX();
+            this.transformedVertexData[(i * 3) + 1] = this.vertexData[(i * 3) + 1] + this.getY();
             this.transformedVertexData[(i * 3) + 2] = this.vertexData[(i * 3) + 2];
         }
     }

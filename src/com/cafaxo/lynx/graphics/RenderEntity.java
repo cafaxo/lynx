@@ -3,16 +3,14 @@ package com.cafaxo.lynx.graphics;
 import com.cafaxo.lynx.util.IDepthContainer;
 import com.cafaxo.lynx.util.Vector2f;
 
-public abstract class RenderEntity extends Vector2f implements IDepthContainer
+public abstract class RenderEntity implements IDepthContainer
 {
+
+    private Vector2f position, origin;
 
     protected ShaderProgram shaderProgram;
 
     protected Texture textures[];
-
-    protected int originX;
-
-    protected int originY;
 
     protected int width;
 
@@ -38,12 +36,13 @@ public abstract class RenderEntity extends Vector2f implements IDepthContainer
 
     public RenderEntity(ShaderProgram shaderProgram, int maxVertexDataSize, int maxIndexDataSize)
     {
-        super(0.f, 0.f);
-
         this.shaderProgram = shaderProgram;
         this.vertexData = new float[maxVertexDataSize];
         this.transformedVertexData = new float[maxVertexDataSize];
         this.indexData = new int[maxIndexDataSize];
+
+        this.position = new Vector2f(0.f, 0.f);
+        this.origin = new Vector2f(0.f, 0.f);
 
         this.visible = true;
         this.hasChanged = true;
@@ -142,20 +141,42 @@ public abstract class RenderEntity extends Vector2f implements IDepthContainer
         this.textures = new Texture[] { texture };
     }
 
-    @Override
     public void setPosition(float x, float y)
     {
-        super.setPosition(x, y);
-
+        this.position.setPosition(x, y);
         this.hasChanged = true;
     }
 
-    @Override
     public void translate(float x, float y)
     {
-        super.translate(x, y);
-
+        this.position.translate(x, y);
         this.hasChanged = true;
+    }
+
+    public float getX()
+    {
+        return this.position.getX();
+    }
+
+    public float getY()
+    {
+        return this.position.getY();
+    }
+
+    public void setOrigin(float x, float y)
+    {
+        this.origin.setPosition(x, y);
+        this.hasChanged = true;
+    }
+
+    public float getOriginX()
+    {
+        return this.origin.getX();
+    }
+
+    public float getOriginY()
+    {
+        return this.origin.getY();
     }
 
     public void setRotation(float rotation)
@@ -173,23 +194,6 @@ public abstract class RenderEntity extends Vector2f implements IDepthContainer
     public float getRotation()
     {
         return this.rotation;
-    }
-
-    public void setOrigin(int originX, int originY)
-    {
-        this.originX = originX;
-        this.originY = originY;
-        this.hasChanged = true;
-    }
-
-    public int getOriginX()
-    {
-        return this.originX;
-    }
-
-    public int getOriginY()
-    {
-        return this.originY;
     }
 
     public void setSize(int width, int height)
