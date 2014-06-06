@@ -1,11 +1,11 @@
-package com.cafaxo.lightingdemo3d;
+package com.cafaxo.lynx.test.lighting3d;
 
 import org.lwjgl.opengl.GL20;
 
-import com.cafaxo.lynx.graphics.RenderManager;
-import com.cafaxo.lynx.graphics.RenderPass;
-import com.cafaxo.lynx.graphics.RenderPassEntity;
-import com.cafaxo.lynx.graphics.ShaderProgram;
+import com.cafaxo.lynx.RenderManager;
+import com.cafaxo.lynx.RenderPass;
+import com.cafaxo.lynx.RenderPassEntity;
+import com.cafaxo.lynx.ShaderProgram;
 import com.cafaxo.lynx.util.CameraFps;
 
 public class LightingPipeline

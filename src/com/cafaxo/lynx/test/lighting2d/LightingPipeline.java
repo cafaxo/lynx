@@ -1,4 +1,4 @@
-package com.cafaxo.lightingdemo;
+package com.cafaxo.lynx.test.lighting2d;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,12 +13,12 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
-import com.cafaxo.lynx.graphics.RenderManager;
-import com.cafaxo.lynx.graphics.RenderPass;
-import com.cafaxo.lynx.graphics.RenderPassEntity;
-import com.cafaxo.lynx.graphics.ShaderProgram;
-import com.cafaxo.lynx.graphics.Sprite;
-import com.cafaxo.lynx.graphics.Texture;
+import com.cafaxo.lynx.RenderManager;
+import com.cafaxo.lynx.RenderPass;
+import com.cafaxo.lynx.RenderPassEntity;
+import com.cafaxo.lynx.ShaderProgram;
+import com.cafaxo.lynx.Texture;
+import com.cafaxo.lynx.entity.Sprite;
 import com.cafaxo.lynx.util.CameraOrthographic;
 import com.cafaxo.lynx.util.Color4f;
 import com.cafaxo.lynx.util.DepthSorter;

@@ -65,15 +65,15 @@ public class Vector3f
 
         return false;
     }
-    
+
     public void rotateY(float angle)
     {
         float cos = (float) Math.cos(angle);
         float sin = (float) Math.sin(angle);
-        
-        float newX = x * cos - z * sin;
-        float newZ = x * sin + z * cos;
-        
+
+        float newX = (this.x * cos) - (this.z * sin);
+        float newZ = (this.x * sin) + (this.z * cos);
+
         this.x = newX;
         this.z = newZ;
     }
@@ -91,9 +91,10 @@ public class Vector3f
 
     public static float dotProduct(Vector3f v, Vector3f w)
     {
-        return v.x * w.x + v.y * w.y + v.z * w.z;
+        return (v.x * w.x) + (v.y * w.y) + (v.z * w.z);
     }
-   
+
+    @Override
     public String toString()
     {
         return "(" + (String.format("%.02f", this.x)) + ", " + (String.format("%.02f", this.y)) + ", " + (String.format("%.02f", this.z)) + ")";

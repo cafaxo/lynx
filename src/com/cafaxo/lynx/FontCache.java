@@ -1,4 +1,4 @@
-package com.cafaxo.lynx.graphics;
+package com.cafaxo.lynx;
 
 import java.awt.Color;
 import java.awt.Font;

@@ -1,6 +1,5 @@
 package com.cafaxo.lynx.util;
 
-
 public class CameraFps
 {
 
@@ -89,12 +88,12 @@ public class CameraFps
 
     public Matrix4x4f getProjection()
     {
-        return projection;
+        return this.projection;
     }
 
     public Matrix4x4f getView()
     {
-        return view;
+        return this.view;
     }
-    
+
 }

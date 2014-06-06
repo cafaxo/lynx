@@ -1,4 +1,4 @@
-package com.cafaxo.lynx.graphics;
+package com.cafaxo.lynx;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -6,6 +6,7 @@ import java.util.Iterator;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 
+import com.cafaxo.lynx.entity.RenderEntity;
 import com.cafaxo.lynx.util.DepthSorter;
 import com.cafaxo.lynx.util.Queue;
 

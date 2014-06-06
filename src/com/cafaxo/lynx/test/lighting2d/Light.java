@@ -1,4 +1,4 @@
-package com.cafaxo.lightingdemo;
+package com.cafaxo.lynx.test.lighting2d;
 
 import java.nio.FloatBuffer;
 

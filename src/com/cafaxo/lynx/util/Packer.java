@@ -3,7 +3,7 @@ package com.cafaxo.lynx.util;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import com.cafaxo.lynx.graphics.TextureSheetNode;
+import com.cafaxo.lynx.TextureSheetNode;
 
 public class Packer
 {

@@ -1,4 +1,4 @@
-package com.cafaxo.lightingdemo3d;
+package com.cafaxo.lynx.test.lighting3d;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
@@ -8,8 +8,10 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 
-import com.cafaxo.lynx.graphics.RenderManager;
-import com.cafaxo.lynx.graphics.Texture;
+import com.cafaxo.lynx.RenderManager;
+import com.cafaxo.lynx.Texture;
+import com.cafaxo.lynx.entity.Model;
+import com.cafaxo.lynx.util.ObjFileParser;
 import com.cafaxo.lynx.util.ResourceLocation;
 import com.cafaxo.lynx.util.ShaderRegistry;
 

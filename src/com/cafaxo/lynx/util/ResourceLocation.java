@@ -21,7 +21,7 @@ public class ResourceLocation
     {
         return ResourceLocation.class.getResourceAsStream(this.path);
     }
-    
+
     public URI getURI()
     {
         try
@@ -32,7 +32,7 @@ public class ResourceLocation
         {
             e.printStackTrace();
         }
-        
+
         return null;
     }
 

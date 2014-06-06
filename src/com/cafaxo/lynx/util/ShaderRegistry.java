@@ -3,7 +3,7 @@ package com.cafaxo.lynx.util;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.cafaxo.lynx.graphics.ShaderProgram;
+import com.cafaxo.lynx.ShaderProgram;
 
 public class ShaderRegistry
 {

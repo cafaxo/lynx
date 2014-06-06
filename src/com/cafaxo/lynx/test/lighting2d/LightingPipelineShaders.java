@@ -1,8 +1,8 @@
-package com.cafaxo.lightingdemo;
+package com.cafaxo.lynx.test.lighting2d;
 
 import org.lwjgl.opengl.GL11;
 
-import com.cafaxo.lynx.graphics.ShaderProgram;
+import com.cafaxo.lynx.ShaderProgram;
 import com.cafaxo.lynx.util.ResourceLocation;
 import com.cafaxo.lynx.util.ShaderRegistry;
 

@@ -1,4 +1,8 @@
-package com.cafaxo.lynx.graphics;
+package com.cafaxo.lynx.entity;
+
+import com.cafaxo.lynx.ShaderProgram;
+import com.cafaxo.lynx.Texture;
+import com.cafaxo.lynx.TextureRegion;
 
 public class Sprite extends RenderEntity
 {
@@ -35,7 +39,7 @@ public class Sprite extends RenderEntity
 
         this.setTextures(textures);
         this.setTextureRegion(textures[0].getTextureRegion());
-        this.setSize(textures[0].width, textures[0].height);
+        this.setSize(textures[0].getWidth(), textures[0].getHeight());
     }
 
     public Sprite(ShaderProgram shaderProgram, Texture texture)

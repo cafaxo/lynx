@@ -2,8 +2,8 @@ package com.cafaxo.lynx.util;
 
 import java.util.ArrayList;
 
-import com.cafaxo.lynx.graphics.RenderEntity;
-import com.cafaxo.lynx.graphics.ShaderProgram;
+import com.cafaxo.lynx.ShaderProgram;
+import com.cafaxo.lynx.entity.RenderEntity;
 
 public class InterpolatedLine extends RenderEntity
 {

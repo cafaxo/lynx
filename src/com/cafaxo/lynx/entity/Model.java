@@ -1,9 +1,8 @@
-package com.cafaxo.lightingdemo3d;
+package com.cafaxo.lynx.entity;
 
-import com.cafaxo.lightingdemo3d.ObjFileParser.ModelData;
-import com.cafaxo.lynx.graphics.RenderEntity;
-import com.cafaxo.lynx.graphics.ShaderProgram;
-import com.cafaxo.lynx.graphics.Texture;
+import com.cafaxo.lynx.ShaderProgram;
+import com.cafaxo.lynx.Texture;
+import com.cafaxo.lynx.util.ObjFileParser.ModelData;
 
 public class Model extends RenderEntity
 {

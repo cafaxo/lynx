@@ -1,4 +1,6 @@
-package com.cafaxo.lynx.graphics;
+package com.cafaxo.lynx.entity;
+
+import com.cafaxo.lynx.ShaderProgram;
 
 public class Polygon extends RenderEntity
 {

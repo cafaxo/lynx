@@ -17,7 +17,7 @@ public class CameraOrthographic
     {
         this.projection.setIdentity();
         this.view.setIdentity();
-        
+
         this.projection.a11 = 2.f / (right - left);
         this.projection.a22 = 2.f / (top - bottom);
         this.projection.a33 = -1.f;
@@ -32,7 +32,7 @@ public class CameraOrthographic
     {
         this.view.a41 = x;
         this.view.a42 = y;
-        
+
         this.isDirty = true;
     }
 
@@ -40,7 +40,7 @@ public class CameraOrthographic
     {
         this.view.a41 += x;
         this.view.a42 += y;
-        
+
         this.isDirty = true;
     }
 
@@ -61,7 +61,7 @@ public class CameraOrthographic
             Matrix4x4f.multiply(this.combined, this.view, this.projection);
             this.isDirty = false;
         }
-    
+
         return this.combined.getBuffer();
     }
 

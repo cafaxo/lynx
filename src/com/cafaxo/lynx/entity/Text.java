@@ -1,5 +1,7 @@
-package com.cafaxo.lynx.graphics;
+package com.cafaxo.lynx.entity;
 
+import com.cafaxo.lynx.FontCache;
+import com.cafaxo.lynx.TextureSheetNode;
 import com.cafaxo.lynx.util.Color4f;
 import com.cafaxo.lynx.util.ShaderRegistry;
 

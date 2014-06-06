@@ -1,4 +1,4 @@
-package com.cafaxo.lightingdemo;
+package com.cafaxo.lynx.test.lighting2d;
 
 import java.awt.Font;
 
@@ -10,16 +10,16 @@ import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 
-import com.cafaxo.lynx.graphics.FontCache;
-import com.cafaxo.lynx.graphics.Polygon;
-import com.cafaxo.lynx.graphics.RenderManager;
-import com.cafaxo.lynx.graphics.RenderPass;
-import com.cafaxo.lynx.graphics.RenderPassEntity;
-import com.cafaxo.lynx.graphics.ShaderProgram;
-import com.cafaxo.lynx.graphics.Sprite;
-import com.cafaxo.lynx.graphics.Text;
-import com.cafaxo.lynx.graphics.TextureSheet;
-import com.cafaxo.lynx.graphics.TextureSheetNode;
+import com.cafaxo.lynx.FontCache;
+import com.cafaxo.lynx.RenderManager;
+import com.cafaxo.lynx.RenderPass;
+import com.cafaxo.lynx.RenderPassEntity;
+import com.cafaxo.lynx.ShaderProgram;
+import com.cafaxo.lynx.TextureSheet;
+import com.cafaxo.lynx.TextureSheetNode;
+import com.cafaxo.lynx.entity.Polygon;
+import com.cafaxo.lynx.entity.Sprite;
+import com.cafaxo.lynx.entity.Text;
 import com.cafaxo.lynx.util.ResourceLocation;
 import com.cafaxo.lynx.util.ShaderRegistry;
 

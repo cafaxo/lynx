@@ -1,4 +1,4 @@
-package com.cafaxo.lightingdemo3d;
+package com.cafaxo.lynx.util;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -6,8 +6,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-
-import com.cafaxo.lynx.util.ResourceLocation;
 
 public class ObjFileParser
 {
@@ -23,15 +21,15 @@ public class ObjFileParser
         int faces;
     }
 
-    class ModelData
+    public class ModelData
     {
-        float[] positions;
+        public float[] positions;
 
-        float[] texels;
+        public float[] texels;
 
-        float[] normals;
+        public float[] normals;
 
-        int[] faces;
+        public int[] faces;
 
         public ModelData(ModelProperties properties)
         {

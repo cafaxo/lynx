@@ -1,5 +1,7 @@
-package com.cafaxo.lynx.graphics;
+package com.cafaxo.lynx.entity;
 
+import com.cafaxo.lynx.ShaderProgram;
+import com.cafaxo.lynx.Texture;
 import com.cafaxo.lynx.util.IDepthContainer;
 import com.cafaxo.lynx.util.Vector2f;
 
