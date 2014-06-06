@@ -198,7 +198,7 @@ public abstract class ShaderProgram
         // fixes driver inconsistencies
         if (shaderAttribute == null)
         {
-            System.out.println("unkown attribute: " + attribute + ", generating dummy to prevent npe.");
+            System.out.println("unknown attribute: " + attribute + ", generating dummy to prevent npe.");
             return new ShaderAttribute(attribute, 0);
         }
 
