@@ -3,7 +3,7 @@ package com.cafaxo.lynx.util;
 public class Vector2f
 {
 
-    protected float x, y;
+    public float x, y;
 
     public Vector2f(float x, float y)
     {
@@ -68,16 +68,6 @@ public class Vector2f
         }
 
         return false;
-    }
-
-    public float getX()
-    {
-        return this.x;
-    }
-
-    public float getY()
-    {
-        return this.y;
     }
 
     public float magnitude()

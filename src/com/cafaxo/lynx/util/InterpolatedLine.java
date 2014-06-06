@@ -57,17 +57,17 @@ public class InterpolatedLine extends RenderEntity
 
         for (int i = 1; i < (pointsCopy.size() - 2); ++i)
         {
-            p0 = pointsCopy.get(i).getX();
-            p1 = pointsCopy.get(i).getY();
-            p2 = pointsCopy.get(i + 1).getX();
-            p3 = pointsCopy.get(i + 1).getY();
+            p0 = pointsCopy.get(i).x;
+            p1 = pointsCopy.get(i).y;
+            p2 = pointsCopy.get(i + 1).x;
+            p3 = pointsCopy.get(i + 1).y;
 
             // calc tension vectors
-            t1x = (p2 - pointsCopy.get(i - 1).getX()) * tension;
-            t2x = (pointsCopy.get(i + 2).getX() - p0) * tension;
+            t1x = (p2 - pointsCopy.get(i - 1).x) * tension;
+            t2x = (pointsCopy.get(i + 2).x - p0) * tension;
 
-            t1y = (p3 - pointsCopy.get(i - 1).getY()) * tension;
-            t2y = (pointsCopy.get(i + 2).getY() - p1) * tension;
+            t1y = (p3 - pointsCopy.get(i - 1).y) * tension;
+            t2y = (pointsCopy.get(i + 2).y - p1) * tension;
 
             for (t = 0; t <= numOfSegments; t++)
             {
@@ -123,10 +123,10 @@ public class InterpolatedLine extends RenderEntity
         Vector2f vec1 = result.get(i);
         Vector2f vec2 = result.get(i + 1);
 
-        Vector2f sub = new Vector2f(vec2.getX() - vec1.getX(), vec2.getY() - vec1.getY());
+        Vector2f sub = new Vector2f(vec2.x - vec1.x, vec2.y - vec1.y);
 
-        Vector2f n1 = new Vector2f(-sub.getY(), sub.getX());
-        Vector2f n2 = new Vector2f(sub.getY(), -sub.getX());
+        Vector2f n1 = new Vector2f(-sub.y, sub.x);
+        Vector2f n2 = new Vector2f(sub.y, -sub.x);
 
         n1 = n1.normalize();
         n2 = n2.normalize();
@@ -137,8 +137,8 @@ public class InterpolatedLine extends RenderEntity
         Vector2f res1 = Vector2f.add(vec1, n1);
         Vector2f res2 = Vector2f.add(vec1, n2);
 
-        this.addVertex(res1.getX(), res1.getY(), 0.4f, 0.5f, 0.6f, 1.f);
-        this.addVertex(res2.getX(), res2.getY(), 0.4f, 0.5f, 0.6f, 1.f);
+        this.addVertex(res1.x, res1.y, 0.4f, 0.5f, 0.6f, 1.f);
+        this.addVertex(res2.x, res2.y, 0.4f, 0.5f, 0.6f, 1.f);
 
         for (i += 1; i < (result.size() - 1); ++i)
         {
@@ -146,10 +146,10 @@ public class InterpolatedLine extends RenderEntity
             Vector2f active = result.get(i);
             Vector2f next = result.get(i + 1);
 
-            sub = new Vector2f(next.getX() - previous.getX(), next.getY() - previous.getY());
+            sub = new Vector2f(next.x - previous.x, next.y - previous.y);
             sub = sub.normalize();
-            n1 = new Vector2f(-sub.getY(), sub.getX());
-            n2 = new Vector2f(sub.getY(), -sub.getX());
+            n1 = new Vector2f(-sub.y, sub.x);
+            n2 = new Vector2f(sub.y, -sub.x);
 
             n1 = n1.normalize();
             n2 = n2.normalize();
@@ -160,8 +160,8 @@ public class InterpolatedLine extends RenderEntity
             res1 = Vector2f.add(active, n1);
             res2 = Vector2f.add(active, n2);
 
-            this.addVertex(res1.getX(), res1.getY(), 0.4f, 0.5f, 0.6f, 1.f);
-            this.addVertex(res2.getX(), res2.getY(), 0.4f, 0.5f, 0.6f, 1.f);
+            this.addVertex(res1.x, res1.y, 0.4f, 0.5f, 0.6f, 1.f);
+            this.addVertex(res2.x, res2.y, 0.4f, 0.5f, 0.6f, 1.f);
 
             this.addTriangleIndices(i * 2, (i * 2) - 1, (i * 2) - 2);
             this.addTriangleIndices(i * 2, (i * 2) + 1, (i * 2) - 1);
@@ -170,10 +170,10 @@ public class InterpolatedLine extends RenderEntity
         vec1 = result.get(result.size() - 2);
         vec2 = result.get(result.size() - 1);
 
-        sub = new Vector2f(vec2.getX() - vec1.getX(), vec2.getY() - vec1.getY());
+        sub = new Vector2f(vec2.x - vec1.x, vec2.y - vec1.y);
 
-        n1 = new Vector2f(-sub.getY(), sub.getX());
-        n2 = new Vector2f(sub.getY(), -sub.getX());
+        n1 = new Vector2f(-sub.y, sub.x);
+        n2 = new Vector2f(sub.y, -sub.x);
 
         n1 = n1.normalize();
         n2 = n2.normalize();
@@ -184,8 +184,8 @@ public class InterpolatedLine extends RenderEntity
         res1 = Vector2f.add(vec2, n1);
         res2 = Vector2f.add(vec2, n2);
 
-        this.addVertex(res1.getX(), res1.getY(), 0.4f, 0.5f, 0.6f, 1.f);
-        this.addVertex(res2.getX(), res2.getY(), 0.4f, 0.5f, 0.6f, 1.f);
+        this.addVertex(res1.x, res1.y, 0.4f, 0.5f, 0.6f, 1.f);
+        this.addVertex(res2.x, res2.y, 0.4f, 0.5f, 0.6f, 1.f);
 
         this.addTriangleIndices(i * 2, (i * 2) - 1, (i * 2) - 2);
         this.addTriangleIndices(i * 2, (i * 2) + 1, (i * 2) - 1);

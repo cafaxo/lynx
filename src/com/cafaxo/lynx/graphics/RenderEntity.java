@@ -155,12 +155,12 @@ public abstract class RenderEntity implements IDepthContainer
 
     public float getX()
     {
-        return this.position.getX();
+        return this.position.x;
     }
 
     public float getY()
     {
-        return this.position.getY();
+        return this.position.y;
     }
 
     public void setOrigin(float x, float y)
@@ -171,12 +171,12 @@ public abstract class RenderEntity implements IDepthContainer
 
     public float getOriginX()
     {
-        return this.origin.getX();
+        return this.origin.x;
     }
 
     public float getOriginY()
     {
-        return this.origin.getY();
+        return this.origin.y;
     }
 
     public void setRotation(float rotation)

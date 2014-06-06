@@ -407,7 +407,7 @@ public class LightingPipeline
                 {
                     GL20.glUniform1i(shaderProgram.getUniform("blurView"), 1);
                     GL20.glUniform2f(shaderProgram.getUniform("sourceDimensions"), LightingPipeline.this.width, LightingPipeline.this.height);
-                    GL20.glUniform2f(shaderProgram.getUniform("viewSource"), LightingPipeline.this.viewSource.getX(), LightingPipeline.this.viewSource.getY());
+                    GL20.glUniform2f(shaderProgram.getUniform("viewSource"), LightingPipeline.this.viewSource.x, LightingPipeline.this.viewSource.y);
                     GL20.glUniform1f(shaderProgram.getUniform("viewDistance"), 128.f);
                     GL20.glUniform1f(shaderProgram.getUniform("viewFadeDistance"), 64.f);
 

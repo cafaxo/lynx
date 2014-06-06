@@ -77,13 +77,13 @@ public class Light implements IDepthContainer
 
     public void refreshTransformedPosition(CameraOrthographic camera)
     {
-        this.transformedPosition.setPosition(this.position.getX() + camera.getX(), this.position.getY() + camera.getY());
+        this.transformedPosition.setPosition(this.position.x + camera.getX(), this.position.y + camera.getY());
     }
 
     public void writeToFloatBuffer(FloatBuffer floatBuffer)
     {
-        floatBuffer.put(this.transformedPosition.getX());
-        floatBuffer.put(this.transformedPosition.getY());
+        floatBuffer.put(this.transformedPosition.x);
+        floatBuffer.put(this.transformedPosition.y);
         floatBuffer.put(this.radius);
         floatBuffer.put(this.coneStart);
         floatBuffer.put(this.coneSize);
