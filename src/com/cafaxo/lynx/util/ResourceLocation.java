@@ -3,6 +3,8 @@ package com.cafaxo.lynx.util;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 
 public class ResourceLocation
@@ -18,6 +20,20 @@ public class ResourceLocation
     public InputStream getInputStream()
     {
         return ResourceLocation.class.getResourceAsStream(this.path);
+    }
+    
+    public URI getURI()
+    {
+        try
+        {
+            return ResourceLocation.class.getResource(this.path).toURI();
+        }
+        catch (URISyntaxException e)
+        {
+            e.printStackTrace();
+        }
+        
+        return null;
     }
 
     public String getString()
