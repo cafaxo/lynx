@@ -44,6 +44,7 @@ public class LightingDemo
         {
             Display.setTitle("lightingdemo");
             Display.setDisplayMode(new DisplayMode(720, 480));
+            Display.setVSyncEnabled(true);
 
             Display.create();
         }
@@ -77,7 +78,7 @@ public class LightingDemo
             @Override
             public void setUniforms(ShaderProgram shaderProgram)
             {
-                GL20.glUniformMatrix4(shaderProgram.getUniform("camera"), false, LightingDemo.this.lightingPipeline.getCamera().getFloatBuffer());
+                GL20.glUniformMatrix4(shaderProgram.getUniform("camera"), false, LightingDemo.this.lightingPipeline.getCamera().getBuffer());
             }
 
         };
@@ -101,7 +102,7 @@ public class LightingDemo
             @Override
             public void setUniforms(ShaderProgram shaderProgram)
             {
-                GL20.glUniformMatrix4(shaderProgram.getUniform("camera"), false, LightingDemo.this.lightingPipeline.getCamera().getFloatBuffer());
+                GL20.glUniformMatrix4(shaderProgram.getUniform("camera"), false, LightingDemo.this.lightingPipeline.getCamera().getBuffer());
             }
 
         };
@@ -125,7 +126,7 @@ public class LightingDemo
             @Override
             public void setUniforms(ShaderProgram shaderProgram)
             {
-                GL20.glUniformMatrix4(shaderProgram.getUniform("camera"), false, LightingDemo.this.lightingPipeline.getCamera().getFloatBuffer());
+                GL20.glUniformMatrix4(shaderProgram.getUniform("camera"), false, LightingDemo.this.lightingPipeline.getCamera().getBuffer());
             }
 
         };

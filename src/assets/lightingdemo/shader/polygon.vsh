@@ -12,5 +12,5 @@ void main()
 {
     colorOut = color;
     
-    gl_Position = vec4(position.x, position.y, 0.0, 1.0) * camera;
+    gl_Position = camera * vec4(position.x, position.y, 0.0, 1.0);
 }

@@ -2,7 +2,7 @@ package com.cafaxo.lightingdemo;
 
 import java.nio.FloatBuffer;
 
-import com.cafaxo.lynx.graphics.OrthographicCamera;
+import com.cafaxo.lynx.util.CameraOrthographic;
 import com.cafaxo.lynx.util.IDepthContainer;
 import com.cafaxo.lynx.util.Vector2f;
 
@@ -75,7 +75,7 @@ public class Light implements IDepthContainer
         this.b = b;
     }
 
-    public void refreshTransformedPosition(OrthographicCamera camera)
+    public void refreshTransformedPosition(CameraOrthographic camera)
     {
         this.transformedPosition.setPosition(this.position.getX() + camera.getX(), this.position.getY() + camera.getY());
     }

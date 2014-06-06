@@ -13,13 +13,13 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
-import com.cafaxo.lynx.graphics.OrthographicCamera;
 import com.cafaxo.lynx.graphics.RenderManager;
 import com.cafaxo.lynx.graphics.RenderPass;
 import com.cafaxo.lynx.graphics.RenderPassEntity;
 import com.cafaxo.lynx.graphics.ShaderProgram;
 import com.cafaxo.lynx.graphics.Sprite;
 import com.cafaxo.lynx.graphics.Texture;
+import com.cafaxo.lynx.util.CameraOrthographic;
 import com.cafaxo.lynx.util.Color4f;
 import com.cafaxo.lynx.util.DepthSorter;
 import com.cafaxo.lynx.util.ShaderRegistry;
@@ -34,7 +34,7 @@ public class LightingPipeline
 
     private int frameBufferId;
 
-    private OrthographicCamera camera, camera2;
+    private CameraOrthographic camera, camera2;
 
     private Texture diffuseMap;
 
@@ -110,8 +110,8 @@ public class LightingPipeline
         this.finalMap = new Texture(width, height);
         this.finalMap.upload();
 
-        this.camera = new OrthographicCamera(0, width, 0, height);
-        this.camera2 = new OrthographicCamera(0, width, 0, height);
+        this.camera = new CameraOrthographic(0, width, 0, height);
+        this.camera2 = new CameraOrthographic(0, width, 0, height);
 
         this.lightBuffer = BufferUtils.createFloatBuffer(16 * Light.SIZE);
 
@@ -242,7 +242,7 @@ public class LightingPipeline
             @Override
             public void setUniforms(ShaderProgram shaderProgram)
             {
-                GL20.glUniformMatrix4(shaderProgram.getUniform("camera"), false, LightingPipeline.this.camera2.getFloatBuffer());
+                GL20.glUniformMatrix4(shaderProgram.getUniform("camera"), false, LightingPipeline.this.camera2.getBuffer());
                 GL20.glUniform2f(shaderProgram.getUniform("direction"), 1.f / (LightingPipeline.this.width), 0.f);
             }
 
@@ -264,7 +264,7 @@ public class LightingPipeline
             @Override
             public void setUniforms(ShaderProgram shaderProgram)
             {
-                GL20.glUniformMatrix4(shaderProgram.getUniform("camera"), false, LightingPipeline.this.camera2.getFloatBuffer());
+                GL20.glUniformMatrix4(shaderProgram.getUniform("camera"), false, LightingPipeline.this.camera2.getBuffer());
                 GL20.glUniform2f(shaderProgram.getUniform("direction"), 0.f, 1.f / (LightingPipeline.this.height));
             }
 
@@ -303,7 +303,7 @@ public class LightingPipeline
             @Override
             public void setUniforms(ShaderProgram shaderProgram)
             {
-                GL20.glUniformMatrix4(shaderProgram.getUniform("camera"), false, LightingPipeline.this.camera2.getFloatBuffer());
+                GL20.glUniformMatrix4(shaderProgram.getUniform("camera"), false, LightingPipeline.this.camera2.getBuffer());
                 GL20.glUniform1(shaderProgram.getUniform("lights[0]"), LightingPipeline.this.lightBuffer);
                 GL20.glUniform1i(shaderProgram.getUniform("numLights"), LightingPipeline.this.lightBuffer.limit() / Light.SIZE);
                 GL20.glUniform2f(shaderProgram.getUniform("shadowMapDimensions"), LightingPipeline.this.shadowMapInfo.getWidth(), LightingPipeline.this.shadowMapInfo.getHeight());
@@ -329,7 +329,7 @@ public class LightingPipeline
             @Override
             public void setUniforms(ShaderProgram shaderProgram)
             {
-                GL20.glUniformMatrix4(shaderProgram.getUniform("camera"), false, LightingPipeline.this.camera2.getFloatBuffer());
+                GL20.glUniformMatrix4(shaderProgram.getUniform("camera"), false, LightingPipeline.this.camera2.getBuffer());
 
                 GL20.glUniform1(shaderProgram.getUniform("lights[0]"), LightingPipeline.this.lightBuffer);
                 GL20.glUniform1i(shaderProgram.getUniform("numLights"), LightingPipeline.this.lightBuffer.limit() / Light.SIZE);
@@ -356,7 +356,7 @@ public class LightingPipeline
             @Override
             public void setUniforms(ShaderProgram shaderProgram)
             {
-                GL20.glUniformMatrix4(shaderProgram.getUniform("camera"), false, LightingPipeline.this.camera2.getFloatBuffer());
+                GL20.glUniformMatrix4(shaderProgram.getUniform("camera"), false, LightingPipeline.this.camera2.getBuffer());
                 GL20.glUniform2f(shaderProgram.getUniform("direction"), 1.f / (LightingPipeline.this.width), 0.f);
             }
 
@@ -377,7 +377,7 @@ public class LightingPipeline
             @Override
             public void setUniforms(ShaderProgram shaderProgram)
             {
-                GL20.glUniformMatrix4(shaderProgram.getUniform("camera"), false, LightingPipeline.this.camera2.getFloatBuffer());
+                GL20.glUniformMatrix4(shaderProgram.getUniform("camera"), false, LightingPipeline.this.camera2.getBuffer());
                 GL20.glUniform2f(shaderProgram.getUniform("direction"), 0.f, 1.f / (LightingPipeline.this.height));
             }
 
@@ -401,7 +401,7 @@ public class LightingPipeline
             @Override
             public void setUniforms(ShaderProgram shaderProgram)
             {
-                GL20.glUniformMatrix4(shaderProgram.getUniform("camera"), false, LightingPipeline.this.camera2.getFloatBuffer());
+                GL20.glUniformMatrix4(shaderProgram.getUniform("camera"), false, LightingPipeline.this.camera2.getBuffer());
 
                 if (LightingPipeline.this.blurView)
                 {
@@ -457,7 +457,7 @@ public class LightingPipeline
             @Override
             public void setUniforms(ShaderProgram shaderProgram)
             {
-                GL20.glUniformMatrix4(shaderProgram.getUniform("camera"), false, LightingPipeline.this.camera2.getFloatBuffer());
+                GL20.glUniformMatrix4(shaderProgram.getUniform("camera"), false, LightingPipeline.this.camera2.getBuffer());
                 GL20.glUniform2f(shaderProgram.getUniform("texcoordOffset"), 1.f / (LightingPipeline.this.width), 1.f / (LightingPipeline.this.height));
             }
 
@@ -491,7 +491,7 @@ public class LightingPipeline
         return this.ambientLightColor;
     }
 
-    public OrthographicCamera getCamera()
+    public CameraOrthographic getCamera()
     {
         return this.camera;
     }
