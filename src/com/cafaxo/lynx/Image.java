@@ -12,6 +12,7 @@ import com.cafaxo.lynx.util.ResourceLocation;
 
 public class Image
 {
+
     protected int width, height;
 
     protected ByteBuffer imageData;
@@ -44,17 +45,17 @@ public class Image
         this.width = image.getWidth();
         this.height = image.getHeight();
 
-        this.init(image, 0, 0, image.getWidth(), image.getHeight());
+        this.readImage(image, 0, 0, image.getWidth(), image.getHeight());
     }
 
     public Image(ResourceLocation source, BufferedImage image, int xOffset, int yOffset, int width, int height)
     {
         this.source = source;
 
-        this.init(image, xOffset, yOffset, width, height);
+        this.readImage(image, xOffset, yOffset, width, height);
     }
 
-    private void init(BufferedImage image, int xOffset, int yOffset, int width, int height)
+    private void readImage(BufferedImage image, int xOffset, int yOffset, int width, int height)
     {
         this.width = width;
         this.height = height;
@@ -103,5 +104,10 @@ public class Image
     public int getHeight()
     {
         return this.height;
+    }
+
+    public ByteBuffer getImageData()
+    {
+        return this.imageData;
     }
 }

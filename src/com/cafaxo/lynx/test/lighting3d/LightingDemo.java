@@ -8,6 +8,7 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 
+import com.cafaxo.lynx.Image;
 import com.cafaxo.lynx.RenderManager;
 import com.cafaxo.lynx.Texture;
 import com.cafaxo.lynx.entity.Model;
@@ -52,7 +53,7 @@ public class LightingDemo
 
         ResourceLocation textureLocation = new ResourceLocation("/assets/lightingdemo3d/cube.png");
 
-        Texture cubeTexture = new Texture(textureLocation);
+        Texture cubeTexture = new Texture(new Image(textureLocation));
         cubeTexture.upload();
 
         this.modelEntity = new Model(ShaderRegistry.instance.get("model"), parser.getModelData(), cubeTexture);
