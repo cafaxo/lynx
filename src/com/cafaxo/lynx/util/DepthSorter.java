@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class DepthSorter<T extends IDepthContainer>
+public class DepthSorter<T extends IDepthContainer> implements Iterable<T>
 {
 
     private class Itr implements Iterator<T>
@@ -110,6 +110,7 @@ public class DepthSorter<T extends IDepthContainer>
         return false;
     }
 
+    @Override
     public Iterator<T> iterator()
     {
         return new Itr();

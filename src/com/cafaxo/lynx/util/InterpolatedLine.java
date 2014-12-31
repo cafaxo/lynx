@@ -2,38 +2,21 @@ package com.cafaxo.lynx.util;
 
 import java.util.ArrayList;
 
-import com.cafaxo.lynx.ShaderProgram;
-import com.cafaxo.lynx.entity.RenderEntity;
+import com.cafaxo.lynx.math.Vector2f;
 
-public class InterpolatedLine extends RenderEntity
+public class InterpolatedLine extends GeometryProvider<Vector2f>
 {
 
     public ArrayList<Vector2f> pointQueue = new ArrayList<Vector2f>(1000);
 
-    private float thickness = 3.0f;
-
-    public InterpolatedLine(ShaderProgram shaderProgram, int maxVertexDataSize, int maxIndicesCount)
-    {
-        super(shaderProgram, maxVertexDataSize, maxIndicesCount);
-
-        this.setVisible(false);
-    }
-
     public void addPoint(Vector2f point)
     {
         this.pointQueue.add(point);
-        this.setHasChanged(true);
-
-        if (this.pointQueue.size() > 2)
-        {
-            this.setVisible(true);
-        }
     }
 
     public void removeFirstPoint()
     {
         this.pointQueue.remove(0);
-        this.setHasChanged(true);
     }
 
     public ArrayList<Vector2f> getCurvePoints(final ArrayList<Vector2f> points, float tension, int numOfSegments)
@@ -97,10 +80,10 @@ public class InterpolatedLine extends RenderEntity
         return result;
     }
 
-    @Override
-    protected void refreshVertexAndIndexData()
+    protected void refresh(float thickness)
     {
-        this.resetVertexAndIndexData();
+        this.vertices.clear();
+        this.faces.clear();
 
         ArrayList<Vector2f> result = this.getCurvePoints(this.pointQueue, 0.5f, 6);
 
@@ -131,14 +114,14 @@ public class InterpolatedLine extends RenderEntity
         n1 = n1.normalize();
         n2 = n2.normalize();
 
-        n1.scale(this.thickness);
-        n2.scale(this.thickness);
+        n1.scale(thickness);
+        n2.scale(thickness);
 
         Vector2f res1 = Vector2f.add(vec1, n1);
         Vector2f res2 = Vector2f.add(vec1, n2);
 
-        this.addVertex(res1.x, res1.y, 0.4f, 0.5f, 0.6f, 1.f);
-        this.addVertex(res2.x, res2.y, 0.4f, 0.5f, 0.6f, 1.f);
+        this.vertices.add(res1);
+        this.vertices.add(res2);
 
         for (i += 1; i < (result.size() - 1); ++i)
         {
@@ -154,17 +137,17 @@ public class InterpolatedLine extends RenderEntity
             n1 = n1.normalize();
             n2 = n2.normalize();
 
-            n1.scale(this.thickness);
-            n2.scale(this.thickness);
+            n1.scale(thickness);
+            n2.scale(thickness);
 
             res1 = Vector2f.add(active, n1);
             res2 = Vector2f.add(active, n2);
 
-            this.addVertex(res1.x, res1.y, 0.4f, 0.5f, 0.6f, 1.f);
-            this.addVertex(res2.x, res2.y, 0.4f, 0.5f, 0.6f, 1.f);
+            this.vertices.add(res1);
+            this.vertices.add(res2);
 
-            this.addTriangleIndices(i * 2, (i * 2) - 1, (i * 2) - 2);
-            this.addTriangleIndices(i * 2, (i * 2) + 1, (i * 2) - 1);
+            this.faces.add(new TriangleIndices(i * 2, (i * 2) - 1, (i * 2) - 2));
+            this.faces.add(new TriangleIndices(i * 2, (i * 2) + 1, (i * 2) - 1));
         }
 
         vec1 = result.get(result.size() - 2);
@@ -178,35 +161,17 @@ public class InterpolatedLine extends RenderEntity
         n1 = n1.normalize();
         n2 = n2.normalize();
 
-        n1.scale(this.thickness);
-        n2.scale(this.thickness);
+        n1.scale(thickness);
+        n2.scale(thickness);
 
         res1 = Vector2f.add(vec2, n1);
         res2 = Vector2f.add(vec2, n2);
 
-        this.addVertex(res1.x, res1.y, 0.4f, 0.5f, 0.6f, 1.f);
-        this.addVertex(res2.x, res2.y, 0.4f, 0.5f, 0.6f, 1.f);
+        this.vertices.add(res1);
+        this.vertices.add(res2);
 
-        this.addTriangleIndices(i * 2, (i * 2) - 1, (i * 2) - 2);
-        this.addTriangleIndices(i * 2, (i * 2) + 1, (i * 2) - 1);
-
-        super.refreshVertexAndIndexData();
-    }
-
-    private void addVertex(float x, float y, float r, float g, float b, float a)
-    {
-        this.addVertexData(x);
-        this.addVertexData(y);
-
-        int intBits = ((int) (255 * a) << 24) | ((int) (255 * b) << 16) | ((int) (255 * g) << 8) | ((int) (255 * r));
-        this.addVertexData(Float.intBitsToFloat(intBits & 0xfeffffff));
-    }
-
-    private void addTriangleIndices(int i1, int i2, int i3)
-    {
-        this.addIndexData(i1);
-        this.addIndexData(i2);
-        this.addIndexData(i3);
+        this.faces.add(new TriangleIndices(i * 2, (i * 2) - 1, (i * 2) - 2));
+        this.faces.add(new TriangleIndices(i * 2, (i * 2) + 1, (i * 2) - 1));
     }
 
 }

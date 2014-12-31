@@ -19,7 +19,14 @@ public class ResourceLocation
 
     public InputStream getInputStream()
     {
-        return ResourceLocation.class.getResourceAsStream(this.path);
+        InputStream is = ResourceLocation.class.getResourceAsStream(this.path);
+
+        if (is == null)
+        {
+            throw new RuntimeException("resource not found: " + this.path);
+        }
+
+        return is;
     }
 
     public URI getURI()
